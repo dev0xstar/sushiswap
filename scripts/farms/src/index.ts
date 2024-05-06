@@ -13,7 +13,7 @@ import { getMinichef } from './lib/chefs/minichef/index.js'
 export async function execute() {
   console.log(`Updating farms`)
 
-  const timestamp = getUnixTime(Date.now())
+  const timestamp = getUnixTime(Date.now())    
 
   const minichefsP = Object.keys(MINICHEF_SUBGRAPH_NAME).map((chainId) => getMinichef(Number(chainId)))
   const masterChefV1P = getMasterChefV1()
@@ -34,13 +34,13 @@ export async function execute() {
       console.log(`Chain ID: ${combination.chainId}. Farms: ${Object.keys(combination.farms).length}`)
     } else {
       console.log(`Chain ID: ${combination.chainId}. Error.`)
-    }
-  }
-  console.log(`Total farms: ${totalFarms}`)
-
+    }    
+  }   
+  console.log(`Total farms: ${totalFarms}`)    
+     
   // eslint-disable-next-line turbo/no-undeclared-env-vars
   if (process.env.DRY_RUN) return
-  ;(await import('./lib/redis.js')).redis.hset(
+  ;(await import('./lib/redis.js')).redis.hset(   
     'farms',
     Object.fromEntries(
       combined
@@ -50,3 +50,4 @@ export async function execute() {
   )
   console.log(`Finished updating farms`)
 }
+      

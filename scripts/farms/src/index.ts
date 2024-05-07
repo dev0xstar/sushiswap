@@ -50,4 +50,3 @@ export async function execute() {
   )
   console.log(`Finished updating farms`)
 }
-      

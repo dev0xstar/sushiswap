@@ -3,6 +3,7 @@ import express from 'express'
 import { execute } from './index.js'
 
 const app = express()
+// const app = express(async)
 
 app.get('/', async (req, res) => {
   try {
@@ -14,4 +15,3 @@ app.get('/', async (req, res) => {
 })
 
 app.listen(8080)    
-    

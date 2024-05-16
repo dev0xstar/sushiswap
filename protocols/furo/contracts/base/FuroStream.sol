@@ -62,7 +62,54 @@ contract FuroStream is
         );
     }
 
+    function createStream(
+        address recipient,
+        address token,
+        uint64 startTime,
+        uint64 endTime,
+        uint256 amount, /// @dev in token amount and not in shares
+        bool fromBentoBox
+    )
+        external
+        payable
+        override
+        returns (uint256 streamId, uint256 depositedShares)
+    {
+        if (startTime < block.timestamp) revert InvalidStartTime();
+        if (endTime <= startTime) revert InvalidEndTime();
 
+        depositedShares = _depositToken(
+            token,
+            msg.sender,
+            address(this),
+            amount,
+            fromBentoBox
+        );
+
+        streamId = streamIds++;
+
+        _mint(recipient, streamId);
+
+        streams[streamId] = Stream({
+            sender: msg.sender,
+            token: token == address(0) ? wETH : token,
+            depositedShares: uint128(depositedShares), // @dev safe since we know bento returns u128
+            withdrawnShares: 0,
+            startTime: startTime,
+            endTime: endTime
+        });
+
+        emit CreateStream(
+            streamId,
+            msg.sender,
+            recipient,
+            token,
+            depositedShares,
+            startTime,
+            endTime,
+            fromBentoBox
+        );
+    }
 
 
 

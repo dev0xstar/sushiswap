@@ -111,6 +111,48 @@ contract FuroStream is
         );
     }
 
+    function withdrawFromStream(
+        uint256 streamId,
+        uint256 sharesToWithdraw,
+        address withdrawTo,
+        bool toBentoBox,
+        bytes calldata taskData
+    ) external override returns (uint256 recipientBalance, address to) {
+        address recipient = ownerOf[streamId];
+        if (msg.sender != streams[streamId].sender && msg.sender != recipient) {
+            revert NotSenderOrRecipient();
+        }
+        Stream storage stream = streams[streamId];
+        (, recipientBalance) = _streamBalanceOf(stream);
+        if (recipientBalance < sharesToWithdraw)
+            revert InvalidWithdrawTooMuch();
+        stream.withdrawnShares += uint128(sharesToWithdraw);
+
+        if (msg.sender == recipient && withdrawTo != address(0)) {
+            to = withdrawTo;
+        } else {
+            to = recipient;
+        }
+
+        _transferToken(
+            stream.token,
+            address(this),
+            to,
+            sharesToWithdraw,
+            toBentoBox
+        );
+
+        if (taskData.length != 0 && msg.sender == recipient)
+            ITasker(to).onTaskReceived(taskData);
+
+        emit Withdraw(
+            streamId,
+            sharesToWithdraw,
+            withdrawTo,
+            stream.token,
+            toBentoBox
+        );
+    }
 
 
 

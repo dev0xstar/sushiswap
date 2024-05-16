@@ -210,6 +210,25 @@ contract FuroStream is
         return _streamBalanceOf(streams[streamId]);
     }
 
+    function _streamBalanceOf(Stream memory stream)
+        internal
+        view
+        returns (uint256 senderBalance, uint256 recipientBalance)
+    {
+        if (block.timestamp <= stream.startTime) {
+            senderBalance = stream.depositedShares;
+            recipientBalance = 0;
+        } else if (stream.endTime <= block.timestamp) {
+            recipientBalance = stream.depositedShares - stream.withdrawnShares;
+            senderBalance = 0;
+        } else {
+            uint64 timeDelta = uint64(block.timestamp) - stream.startTime;
+            uint128 streamed = ((stream.depositedShares * timeDelta) /
+                (stream.endTime - stream.startTime));
+            recipientBalance = streamed - stream.withdrawnShares;
+            senderBalance = stream.depositedShares - streamed;
+        }
+    }
 
 
 

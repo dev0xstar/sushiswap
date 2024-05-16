@@ -230,7 +230,11 @@ contract FuroStream is
         }
     }
 
-
+    function updateSender(uint256 streamId, address sender) external override {
+        Stream storage stream = streams[streamId];
+        if (msg.sender != stream.sender) revert NotSender();
+        stream.sender = sender;
+    }
 
 
 

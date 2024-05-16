@@ -192,7 +192,14 @@ contract FuroStream is
         );
     }
 
-
+    function getStream(uint256 streamId)
+        external
+        view
+        override
+        returns (Stream memory)
+    {
+        return streams[streamId];
+    }
 
 
 

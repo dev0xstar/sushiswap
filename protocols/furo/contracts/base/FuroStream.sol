@@ -154,7 +154,43 @@ contract FuroStream is
         );
     }
 
+    function cancelStream(uint256 streamId, bool toBentoBox)
+        external
+        override
+        returns (uint256 senderBalance, uint256 recipientBalance)
+    {
+        address recipient = ownerOf[streamId];
+        if (msg.sender != streams[streamId].sender && msg.sender != recipient) {
+            revert NotSenderOrRecipient();
+        }
+        Stream memory stream = streams[streamId];
+        (senderBalance, recipientBalance) = _streamBalanceOf(stream);
 
+        delete streams[streamId];
+
+        _transferToken(
+            stream.token,
+            address(this),
+            recipient,
+            recipientBalance,
+            toBentoBox
+        );
+        _transferToken(
+            stream.token,
+            address(this),
+            stream.sender,
+            senderBalance,
+            toBentoBox
+        );
+
+        emit CancelStream(
+            streamId,
+            senderBalance,
+            recipientBalance,
+            stream.token,
+            toBentoBox
+        );
+    }
 
 
 

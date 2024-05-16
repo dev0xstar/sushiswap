@@ -236,7 +236,46 @@ contract FuroStream is
         stream.sender = sender;
     }
 
+    function updateStream(
+        uint256 streamId,
+        uint128 topUpAmount,
+        uint64 extendTime,
+        bool fromBentoBox
+    ) external payable override returns (uint256 depositedShares) {
+        Stream storage stream = streams[streamId];
+        if (msg.sender != stream.sender) revert NotSender();
 
+        depositedShares = _depositToken(
+            stream.token,
+            stream.sender,
+            address(this),
+            topUpAmount,
+            fromBentoBox
+        );
+
+        address recipient = ownerOf[streamId];
+
+        (uint256 senderBalance, uint256 recipientBalance) = _streamBalanceOf(
+            stream
+        );
+
+        stream.startTime = uint64(block.timestamp);
+        stream.withdrawnShares = 0;
+        uint256 newDepositedShares = senderBalance + depositedShares;
+        if (newDepositedShares > type(uint128).max) revert Overflow();
+        stream.depositedShares = uint128(newDepositedShares);
+        stream.endTime += extendTime;
+
+        _transferToken(
+            stream.token,
+            address(this),
+            recipient,
+            recipientBalance,
+            true
+        );
+
+        emit UpdateStream(streamId, topUpAmount, extendTime, fromBentoBox);
+    }
 
 
 

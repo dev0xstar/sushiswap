@@ -201,7 +201,14 @@ contract FuroStream is
         return streams[streamId];
     }
 
-
+    function streamBalanceOf(uint256 streamId)
+        external
+        view
+        override
+        returns (uint256 senderBalance, uint256 recipientBalance)
+    {
+        return _streamBalanceOf(streams[streamId]);
+    }
 
 
 

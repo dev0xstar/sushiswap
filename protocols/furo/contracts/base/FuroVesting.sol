@@ -188,72 +188,13 @@ contract FuroVesting is
         );
     }
 
-    function vestBalance(uint256 vestId)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        Vest memory vest = vests[vestId];
-        return _balanceOf(vest) - vest.claimed;
-    }
+    
 
-    function _balanceOf(Vest memory vest)
-        internal
-        view
-        returns (uint256 claimable)
-    {
-        uint256 timeAfterCliff = vest.start + vest.cliffDuration;
+    
 
-        if (block.timestamp < timeAfterCliff) {
-            return claimable;
-        }
+    
 
-        uint256 passedSinceCliff = block.timestamp - timeAfterCliff;
+    
 
-        uint256 stepPassed = Math.min(
-            vest.steps,
-            passedSinceCliff / vest.stepDuration
-        );
-
-        claimable = vest.cliffShares + (vest.stepShares * stepPassed);
-    }
-
-    function updateOwner(uint256 vestId, address newOwner) external override {
-        Vest storage vest = vests[vestId];
-        if (vest.owner != msg.sender) revert NotOwner();
-        vest.owner = newOwner;
-        emit LogUpdateOwner(vestId, newOwner);
-    }
-
-    function _depositToken(
-        address token,
-        address from,
-        address to,
-        uint256 amount,
-        bool fromBentoBox
-    ) internal returns (uint256 depositedShares) {
-        if (fromBentoBox) {
-            depositedShares = bentoBox.toShare(token, amount, false);
-            bentoBox.transfer(token, from, to, depositedShares);
-        } else {
-            (, depositedShares) = bentoBox.deposit{
-                value: token == address(0) ? amount : 0
-            }(token, from, to, amount, 0);
-        }
-    }
-
-    function _transferToken(
-        address token,
-        address from,
-        address to,
-        uint256 shares,
-        bool toBentoBox
-    ) internal {
-        if (toBentoBox) {
-            bentoBox.transfer(token, from, to, shares);
-        } else {
-            bentoBox.withdraw(token, from, to, 0, shares);
-        }
-    }
+    
 }

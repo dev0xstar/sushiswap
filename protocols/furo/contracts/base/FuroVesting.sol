@@ -243,5 +243,17 @@ contract FuroVesting is
         }
     }
 
-    
+    function _transferToken(
+        address token,
+        address from,
+        address to,
+        uint256 shares,
+        bool toBentoBox
+    ) internal {
+        if (toBentoBox) {
+            bentoBox.transfer(token, from, to, shares);
+        } else {
+            bentoBox.withdraw(token, from, to, 0, shares);
+        }
+    }
 }

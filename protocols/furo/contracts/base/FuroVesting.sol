@@ -198,7 +198,26 @@ contract FuroVesting is
         return _balanceOf(vest) - vest.claimed;
     }
 
-    
+    function _balanceOf(Vest memory vest)
+        internal
+        view
+        returns (uint256 claimable)
+    {
+        uint256 timeAfterCliff = vest.start + vest.cliffDuration;
+
+        if (block.timestamp < timeAfterCliff) {
+            return claimable;
+        }
+
+        uint256 passedSinceCliff = block.timestamp - timeAfterCliff;
+
+        uint256 stepPassed = Math.min(
+            vest.steps,
+            passedSinceCliff / vest.stepDuration
+        );
+
+        claimable = vest.cliffShares + (vest.stepShares * stepPassed);
+    }
 
     
 

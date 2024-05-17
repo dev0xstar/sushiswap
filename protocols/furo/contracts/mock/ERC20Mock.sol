@@ -16,7 +16,9 @@ contract ERC20Mock is ERC20 {
         _mint(msg.sender, supply);
     }
 
-    
+    receive() external payable {
+        deposit();
+    }
 
     
 

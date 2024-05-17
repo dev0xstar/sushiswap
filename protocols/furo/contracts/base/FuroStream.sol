@@ -277,7 +277,22 @@ contract FuroStream is
         emit UpdateStream(streamId, topUpAmount, extendTime, fromBentoBox);
     }
 
-
+    function _depositToken(
+        address token,
+        address from,
+        address to,
+        uint256 amount,
+        bool fromBentoBox
+    ) internal returns (uint256 depositedShares) {
+        if (fromBentoBox) {
+            depositedShares = bentoBox.toShare(token, amount, false);
+            bentoBox.transfer(token, from, to, depositedShares);
+        } else {
+            (, depositedShares) = bentoBox.deposit{
+                value: token == address(0) ? amount : 0
+            }(token, from, to, amount, 0);
+        }
+    }
 
 
 }

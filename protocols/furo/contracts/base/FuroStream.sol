@@ -294,5 +294,17 @@ contract FuroStream is
         }
     }
 
-
+    function _transferToken(
+        address token,
+        address from,
+        address to,
+        uint256 share,
+        bool toBentoBox
+    ) internal {
+        if (toBentoBox) {
+            bentoBox.transfer(token, from, to, share);
+        } else {
+            bentoBox.withdraw(token, from, to, 0, share);
+        }
+    }
 }

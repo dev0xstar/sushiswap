@@ -24,7 +24,15 @@ contract FuroStreamRouter is Multicall {
     _bentoBox.registerProtocol();
   }
 
-  
+  function setBentoBoxApproval(
+    address user,
+    bool approved,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external payable {
+    bentoBox.setMasterContractApproval(user, address(this), approved, v, r, s);
+  }
 
   
 

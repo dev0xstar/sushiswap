@@ -188,7 +188,15 @@ contract FuroVesting is
         );
     }
 
-    
+    function vestBalance(uint256 vestId)
+        external
+        view
+        override
+        returns (uint256)
+    {
+        Vest memory vest = vests[vestId];
+        return _balanceOf(vest) - vest.claimed;
+    }
 
     
 

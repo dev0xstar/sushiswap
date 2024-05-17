@@ -219,7 +219,12 @@ contract FuroVesting is
         claimable = vest.cliffShares + (vest.stepShares * stepPassed);
     }
 
-    
+    function updateOwner(uint256 vestId, address newOwner) external override {
+        Vest storage vest = vests[vestId];
+        if (vest.owner != msg.sender) revert NotOwner();
+        vest.owner = newOwner;
+        emit LogUpdateOwner(vestId, newOwner);
+    }
 
     
 

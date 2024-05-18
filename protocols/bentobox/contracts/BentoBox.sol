@@ -142,7 +142,13 @@ contract BentoBox is MasterContractManager, BoringBatchable {
     /// @param amount The `token` amount.
     /// @param roundUp If the result `share` should be rounded up.
     /// @return share The token amount represented in shares.
-    
+    function toShare(
+        IERC20 token,
+        uint256 amount,
+        bool roundUp
+    ) external view returns (uint256 share) {
+        share = totals[token].toBase(amount, roundUp);
+    }
 
     /// @dev Helper function represent shares back into the `token` amount.
     /// @param token The ERC-20 token.

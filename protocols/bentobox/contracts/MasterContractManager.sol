@@ -57,7 +57,14 @@ contract MasterContractManager is BoringOwnable, BoringFactory {
     }
 
     /// @notice Enables or disables a contract for approval without signed message.
-    
+    function whitelistMasterContract(address masterContract, bool approved) public onlyOwner {
+        // Checks
+        require(masterContract != address(0), "MasterCMgr: Cannot approve 0");
+
+        // Effects
+        whitelistedMasterContracts[masterContract] = approved;
+        emit LogWhiteListMasterContract(masterContract, approved);
+    }
 
     /// @notice Approves or revokes a `masterContract` access to `user` funds.
     /// @param user The address of the user that approves or revokes access.

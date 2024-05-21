@@ -42,7 +42,13 @@ contract MasterContractManager is BoringOwnable, BoringFactory {
     }
 
     // solhint-disable-next-line func-name-mixedcase
-    
+    function DOMAIN_SEPARATOR() public view returns (bytes32) {
+        uint256 chainId;
+        assembly {
+            chainId := chainid()
+        }
+        return chainId == DOMAIN_SEPARATOR_CHAIN_ID ? _DOMAIN_SEPARATOR : _calculateDomainSeparator(chainId);
+    }
 
     /// @notice Other contracts need to register with this master contract so that users can approve them for the BentoBox.
     

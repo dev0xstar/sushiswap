@@ -51,7 +51,10 @@ contract MasterContractManager is BoringOwnable, BoringFactory {
     }
 
     /// @notice Other contracts need to register with this master contract so that users can approve them for the BentoBox.
-    
+    function registerProtocol() public {
+        masterContractOf[msg.sender] = msg.sender;
+        emit LogRegisterProtocol(msg.sender);
+    }
 
     /// @notice Enables or disables a contract for approval without signed message.
     

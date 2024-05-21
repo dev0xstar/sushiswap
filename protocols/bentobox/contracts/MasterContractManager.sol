@@ -42,29 +42,13 @@ contract MasterContractManager is BoringOwnable, BoringFactory {
     }
 
     // solhint-disable-next-line func-name-mixedcase
-    function DOMAIN_SEPARATOR() public view returns (bytes32) {
-        uint256 chainId;
-        assembly {
-            chainId := chainid()
-        }
-        return chainId == DOMAIN_SEPARATOR_CHAIN_ID ? _DOMAIN_SEPARATOR : _calculateDomainSeparator(chainId);
-    }
+    
 
     /// @notice Other contracts need to register with this master contract so that users can approve them for the BentoBox.
-    function registerProtocol() public {
-        masterContractOf[msg.sender] = msg.sender;
-        emit LogRegisterProtocol(msg.sender);
-    }
+    
 
     /// @notice Enables or disables a contract for approval without signed message.
-    function whitelistMasterContract(address masterContract, bool approved) public onlyOwner {
-        // Checks
-        require(masterContract != address(0), "MasterCMgr: Cannot approve 0");
-
-        // Effects
-        whitelistedMasterContracts[masterContract] = approved;
-        emit LogWhiteListMasterContract(masterContract, approved);
-    }
+    
 
     /// @notice Approves or revokes a `masterContract` access to `user` funds.
     /// @param user The address of the user that approves or revokes access.

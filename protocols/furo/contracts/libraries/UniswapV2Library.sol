@@ -94,7 +94,20 @@ library UniswapV2Library {
     }
 
     // given an output amount of an asset and pair reserves, returns a required input amount of the other asset
-    
+    function getAmountIn(
+        uint256 amountOut,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) internal pure returns (uint256 amountIn) {
+        require(amountOut > 0, "UniswapV2Library: INSUFFICIENT_OUTPUT_AMOUNT");
+        require(
+            reserveIn > 0 && reserveOut > 0,
+            "UniswapV2Library: INSUFFICIENT_LIQUIDITY"
+        );
+        uint256 numerator = reserveIn.mul(amountOut).mul(1000);
+        uint256 denominator = reserveOut.sub(amountOut).mul(997);
+        amountIn = (numerator / denominator).add(1);
+    }
 
     // performs chained getAmountOut calculations on any number of pairs
     

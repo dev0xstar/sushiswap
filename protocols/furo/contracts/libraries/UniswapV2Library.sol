@@ -47,7 +47,20 @@ library UniswapV2Library {
     }
 
     // fetches and sorts the reserves for a pair
-    
+    function getReserves(
+        address factory,
+        address tokenA,
+        address tokenB,
+        bytes32 pairCodeHash
+    ) internal view returns (uint256 reserveA, uint256 reserveB) {
+        (address token0, ) = sortTokens(tokenA, tokenB);
+        (uint256 reserve0, uint256 reserve1, ) = IUniswapV2Pair(
+            pairFor(factory, tokenA, tokenB, pairCodeHash)
+        ).getReserves();
+        (reserveA, reserveB) = tokenA == token0
+            ? (reserve0, reserve1)
+            : (reserve1, reserve0);
+    }
 
     // given some amount of an asset and pair reserves, returns an equivalent amount of the other asset
     

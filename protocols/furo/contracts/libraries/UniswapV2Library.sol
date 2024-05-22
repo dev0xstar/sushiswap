@@ -110,7 +110,25 @@ library UniswapV2Library {
     }
 
     // performs chained getAmountOut calculations on any number of pairs
-    
+    function getAmountsOut(
+        address factory,
+        uint256 amountIn,
+        address[] memory path,
+        bytes32 pairCodeHash
+    ) internal view returns (uint256[] memory amounts) {
+        require(path.length >= 2, "UniswapV2Library: INVALID_PATH");
+        amounts = new uint256[](path.length);
+        amounts[0] = amountIn;
+        for (uint256 i; i < path.length - 1; i++) {
+            (uint256 reserveIn, uint256 reserveOut) = getReserves(
+                factory,
+                path[i],
+                path[i + 1],
+                pairCodeHash
+            );
+            amounts[i + 1] = getAmountOut(amounts[i], reserveIn, reserveOut);
+        }
+    }
 
     // performs chained getAmountIn calculations on any number of pairs
     

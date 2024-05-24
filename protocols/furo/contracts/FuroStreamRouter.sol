@@ -34,7 +34,30 @@ contract FuroStreamRouter is Multicall {
     bentoBox.setMasterContractApproval(user, address(this), approved, v, r, s);
   }
 
-  
+  function createStream(
+    address recipient,
+    address token,
+    uint64 startTime,
+    uint64 endTime,
+    uint256 amount, /// @dev in token amount and not in shares
+    bool fromBentoBox,
+    uint256 minShare
+  ) external payable returns (uint256 streamId, uint256 depositedShares) {
+    depositedShares = _depositToken(token, msg.sender, address(this), amount, fromBentoBox);
+
+    if (depositedShares < minShare) revert InsufficientShares();
+
+    (streamId, ) = furoStream.createStream(
+      recipient,
+      token == address(0) ? wETH : token,
+      startTime,
+      endTime,
+      amount,
+      true
+    );
+
+    furoStream.updateSender(streamId, msg.sender);
+  }
 
   
 }

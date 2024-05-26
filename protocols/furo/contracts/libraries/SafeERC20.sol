@@ -11,7 +11,12 @@ library SafeERC20 {
         return success && data.length > 0 ? abi.decode(data, (string)) : "???";
     }
 
-    
+    function safeName(IERC20 token) internal view returns (string memory) {
+        (bool success, bytes memory data) = address(token).staticcall(
+            abi.encodeWithSelector(0x06fdde03)
+        );
+        return success && data.length > 0 ? abi.decode(data, (string)) : "???";
+    }
 
     
 

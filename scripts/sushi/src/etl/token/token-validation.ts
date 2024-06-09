@@ -46,3 +46,11 @@ export async function transform(client: PrismaClient, data: TokenResponse[]): Pr
   return tokensToApprove
 }
 
+export interface TokenResponse {
+  address: string
+  chainId: number
+  decimals: number
+  logoURI: string
+  name: string
+  symbol: string
+}

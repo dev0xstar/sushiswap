@@ -167,7 +167,25 @@ app.get(
   timeout('600s')
 )
 
+app.get(
+  '/liquidity',
+  async (req, res) => {
+    req.setTimeout(300000)
 
+    const result = chainIdOnlySchema.safeParse(req.query)
+    if (!result.success) {
+      return res.status(400).json(result.error.format())
+    }
+    const { chainId } = result.data
+    try {
+      await liquidity(chainId)
+      res.sendStatus(200)
+    } catch (err) {
+      res.status(500).send(err)
+    } 
+  },
+  timeout('300s')
+)
 
 app.get(
   '/whitelist-pools',

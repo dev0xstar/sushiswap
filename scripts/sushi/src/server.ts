@@ -187,61 +187,7 @@ app.get(
   timeout('300s')
 )
 
-app.get(
-  '/reserves',
-  async (req, res) => {
-    req.setTimeout(300000)
 
-    const result = chainIdOnlySchema.safeParse(req.query)
-    if (!result.success) {
-      return res.status(400).json(result.error.format())
-    }
 
-    const { chainId } = result.data
-    try {
-      await reserves(chainId)
-      res.sendStatus(200)
-    } catch (err) {
-      res.status(500).send(err)
-    } 
-  },
-  timeout('300s')
-)
-
-app.get(
-  '/whitelist-pools',
-  async (req, res) => {
-    req.setTimeout(300000)
-
-    try {
-      await whitelistPools()
-      res.sendStatus(200)
-    } catch (err) {
-      res.status(500).send(err)
-    } 
-  },
-  timeout('300s')
-)
-
-app.get(
-  '/price',
-  async (req, res) => {
-    req.setTimeout(300000)
-
-    const result = priceSchema.safeParse(req.query)
-    if (!result.success) {
-      return res.status(400).json(result.error.format())
-    }
-
-    const { chainId, base, price } = result.data
-    try {
-      await prices(chainId, base, price)
-      res.sendStatus(200)
-    } catch (err) {
-      res.status(500).send(err)
-    } 
-  },
-  timeout('300s')
-)
 
 app.listen(8080)

@@ -168,6 +168,22 @@ app.get(
 )
 
 
+
+app.get(
+  '/whitelist-pools',
+  async (req, res) => {
+    req.setTimeout(300000)
+
+    try {
+      await whitelistPools()
+      res.sendStatus(200)
+    } catch (err) {
+      res.status(500).send(err)
+    } 
+  },
+  timeout('300s')
+)
+
 app.get(
   '/price',
   async (req, res) => {

@@ -105,3 +105,64 @@ async function start(client: PrismaClient) {
   console.log(`Finished loading pairs for ${PROTOCOL} from all subgraphs, ${totalPairCount} pairs`)
 }
 
+function transform(
+  chainId: ChainId,
+  data: V2PairsQuery
+): {
+  pools: Prisma.PoolCreateManyInput[]
+  tokens: Prisma.TokenCreateManyInput[]
+} {
+  const tokens: Prisma.TokenCreateManyInput[] = []
+  const uniqueTokens: Set<string> = new Set()
+  const poolsTransformed = data.V2_pairs.map((pair) => {
+    if (!uniqueTokens.has(pair.token0.id)) {
+      uniqueTokens.add(pair.token0.id)
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: chainId.toString().concat(':').concat(pair.token0.id),
+          address: pair.token0.id,
+          chainId,
+          name: pair.token0.name,
+          symbol: pair.token0.symbol,
+          decimals: Number(pair.token0.decimals),
+        })
+      )
+    }
+    if (!uniqueTokens.has(pair.token1.id)) {
+      uniqueTokens.add(pair.token1.id)
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: chainId.toString().concat(':').concat(pair.token1.id),
+          address: pair.token1.id,
+          chainId: chainId,
+          name: pair.token1.name,
+          symbol: pair.token1.symbol,
+          decimals: Number(pair.token1.decimals),
+        })
+      )
+    }
+
+    const regex = /([^\w ]|_|-)/g
+    const name = pair.token0.symbol
+      .replace(regex, '')
+      .slice(0, 15)
+      .concat('-')
+      .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
+    return Prisma.validator<Prisma.PoolCreateManyInput>()({
+      id: chainId.toString().concat(':').concat(pair.id),
+      address: pair.id,
+      name,
+      protocol: PROTOCOL,
+      version: VERSION,
+      type: CONSTANT_PRODUCT_POOL,
+      chainId,
+      swapFee: SWAP_FEE,
+      twapEnabled: TWAP_ENABLED,
+      token0Id: chainId.toString().concat(':').concat(pair.token0.id),
+      token1Id: chainId.toString().concat(':').concat(pair.token1.id),
+      liquidityUSD: 0,
+    })
+  })
+
+  return { pools: poolsTransformed, tokens }
+}

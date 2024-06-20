@@ -143,4 +143,26 @@ function transform(
     }
 
     const regex = /([^\w ]|_|-)/g
+    const name = pair.token0.symbol
+      .replace(regex, '')
+      .slice(0, 15)
+      .concat('-')
+      .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
+    return Prisma.validator<Prisma.PoolCreateManyInput>()({
+      id: chainId.toString().concat(':').concat(pair.id),
+      address: pair.id,
+      name,
+      protocol: PROTOCOL,
+      version: VERSION,
+      type: CONSTANT_PRODUCT_POOL,
+      chainId,
+      swapFee: SWAP_FEE,
+      twapEnabled: TWAP_ENABLED,
+      token0Id: chainId.toString().concat(':').concat(pair.token0.id),
+      token1Id: chainId.toString().concat(':').concat(pair.token1.id),
+      liquidityUSD: 0,
+    })
+  })
 
+  return { pools: poolsTransformed, tokens }
+}

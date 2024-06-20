@@ -103,4 +103,21 @@ async function start(client: PrismaClient) {
     )
   }
   console.log(`Finished loading pairs for ${PROTOCOL} from all subgraphs, ${totalPairCount} pairs`)
+}
+
+function transform(
+  chainId: ChainId,
+  data: V2PairsQuery
+): {
+  pools: Prisma.PoolCreateManyInput[]
+  tokens: Prisma.TokenCreateManyInput[]
+} {
+  const tokens: Prisma.TokenCreateManyInput[] = []
+  const uniqueTokens: Set<string> = new Set()
+  const poolsTransformed = data.V2_pairs.map((pair) => {
+    if (!uniqueTokens.has(pair.token0.id)) {
+      uniqueTokens.add(pair.token0.id)
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: chainId.toString().concat(':').concat(pair.token0.id),
 

@@ -120,4 +120,27 @@ function transform(
       tokens.push(
         Prisma.validator<Prisma.TokenCreateManyInput>()({
           id: chainId.toString().concat(':').concat(pair.token0.id),
+          address: pair.token0.id,
+          chainId,
+          name: pair.token0.name,
+          symbol: pair.token0.symbol,
+          decimals: Number(pair.token0.decimals),
+        })
+      )
+    }
+    if (!uniqueTokens.has(pair.token1.id)) {
+      uniqueTokens.add(pair.token1.id)
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: chainId.toString().concat(':').concat(pair.token1.id),
+          address: pair.token1.id,
+          chainId: chainId,
+          name: pair.token1.name,
+          symbol: pair.token1.symbol,
+          decimals: Number(pair.token1.decimals),
+        })
+      )
+    }
+
+    const regex = /([^\w ]|_|-)/g
 

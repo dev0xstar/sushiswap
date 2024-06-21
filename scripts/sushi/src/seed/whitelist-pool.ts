@@ -23,6 +23,31 @@ async function start(client: PrismaClient) {
   const approvedTokensResult = await client.token.findMany({
     select: {
       id: true,
+    },
+    where: {
+      isFeeOnTransfer: false,
+      status: 'APPROVED',
+    },
+  })
+
+  const approvedTokens = approvedTokensResult.map((token) => token.id)
+  console.log(`Fetched ${approvedTokens.length} tokens (approved and not fee on transfer).`)
+
+  const batchSize = 10000
+  let cursor = null
+  const poolsToUpdate: string[] = []
+  let totalCount = 0
+
+  do {
+    const requestStartTime = performance.now()
+    let result = []
+    if (!cursor) {
+      result = await getPoolsAddresses(client, approvedTokens, batchSize)
+    } else {
+      result = await getPoolsAddresses(client, approvedTokens, batchSize, 1, { id: cursor })
+    }
+    cursor = result.length == batchSize ? result[result.length - 1].id : null
+    totalCount += result.length
 
 
 

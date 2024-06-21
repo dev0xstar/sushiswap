@@ -69,7 +69,33 @@ async function start(client: PrismaClient) {
     const batch = poolsToUpdate.slice(i, i + updatePoolsBatchSize)
     const batchToUpdate = batch.map((id) =>
       client.pool.update({
+        where: {
+          id,
+        },
+        data: {
+          isWhitelisted: true,
+        },
+      })
+    )
+    const poolsUpdated = await Promise.allSettled(batchToUpdate)
 
+    console.log(`LOAD - ${poolsUpdated.length} pools whitelisted.`)
+    updatePoolCount += poolsUpdated.length
+  }
+  console.log(`LOAD - COMPLETE, ${updatePoolCount} pools whitelisted.`)
+}
+
+async function getPoolsAddresses(
+  client: PrismaClient,
+  approvedIds: string[],
+  take: number,
+  skip?: number,
+  cursor?: Prisma.PoolWhereUniqueInput
+) {
+  const approvedTokens = await client.pool.findMany({
+    take,
+    skip,
+    cursor,
     select: {
       id: true,
     },

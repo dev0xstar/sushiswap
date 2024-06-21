@@ -49,7 +49,26 @@ async function start(client: PrismaClient) {
     cursor = result.length == batchSize ? result[result.length - 1].id : null
     totalCount += result.length
 
+    poolsToUpdate.push(...result.map((pool) => pool.id))
+    const requestEndTime = performance.now()
+    if (result.length > 0) {
+      console.log(
+        `Fetched a batch of pool addresses with ${result.length} (${(
+          (requestEndTime - requestStartTime) /
+          1000
+        ).toFixed(1)}s). cursor: ${cursor}, pool count that needs whitelisting: ${result.length}`
+      )
+    } else {
+      console.log(`No pools needs whitelisting.`)
+    }
+  } while (cursor != null)
 
+  const updatePoolsBatchSize = 200
+  let updatePoolCount = 0
+  for (let i = 0; i < poolsToUpdate.length; i += updatePoolsBatchSize) {
+    const batch = poolsToUpdate.slice(i, i + updatePoolsBatchSize)
+    const batchToUpdate = batch.map((id) =>
+      client.pool.update({
 
     select: {
       id: true,

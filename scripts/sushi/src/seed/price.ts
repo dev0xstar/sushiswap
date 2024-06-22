@@ -163,7 +163,18 @@ async function transform(chainId: ChainId, pools: Pool[]) {
     }
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
-n>()
+    if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
+      rPoo
+          )
+        )
+      }
+    }
+  })
+  return { rPools, tokens }
+}
+
+async function fetchRebases(pools: Pool[], chainId: ChainId) {
+  const tokenMap = new Map<string, Token>()
   pools.forEach((pool) => {
     tokenMap.set(pool.token0.address, pool.token0)
     tokenMap.set(pool.token1.address, pool.token1)

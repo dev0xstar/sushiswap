@@ -164,7 +164,19 @@ async function transform(chainId: ChainId, pools: Pool[]) {
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
     if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
-      rPoo
+      rPools.push(
+        new ConstantProductRPool(
+          pool.address,
+
+            token0,
+            token1,
+            pool.swapFee,
+            BigNumber.from(pool.reserve0),
+            BigNumber.from(pool.reserve1),
+            pool.token0.decimals,
+            pool.token1.decimals,
+            total0,
+            total1
           )
         )
       }

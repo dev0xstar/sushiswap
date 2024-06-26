@@ -149,6 +149,25 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
   const rebases = await fetchRebases(stablePools, chainId)
 
+  const rPools: RPool[] = []
+  pools.forEach((pool) => {
+    const token0 = {
+      address: pool.token0.address,
+      name: pool.token0.name,
+      symbol: pool.token0.symbol,
+
+            total0,
+            total1
+          )
+        )
+      }
+    }
+  })
+  return { rPools, tokens }
+}
+
+async function fetchRebases(pools: Pool[], chainId: ChainId) {
+  const tokenMap = new Map<string, Token>()
   pools.forEach((pool) => {
     tokenMap.set(pool.token0.address, pool.token0)
     tokenMap.set(pool.token1.address, pool.token1)

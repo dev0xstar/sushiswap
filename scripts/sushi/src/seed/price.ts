@@ -149,57 +149,6 @@ async function transform(chainId: ChainId, pools: Pool[]) {
   const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
   const rebases = await fetchRebases(stablePools, chainId)
 
-  const rPools: RPool[] = []
-  pools.forEach((pool) => {
-    const token0 = {
-      address: pool.token0.address,
-      name: pool.token0.name,
-      symbol: pool.token0.symbol,
-    }
-    const token1 = {
-      address: pool.token1.address,
-      name: pool.token1.name,
-      symbol: pool.token1.symbol,
-    }
-    if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
-    if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
-    if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
-      rPools.push(
-        new ConstantProductRPool(
-          pool.address,
-          token0,
-          token1,
-          pool.swapFee,
-          BigNumber.from(pool.reserve0),
-          BigNumber.from(pool.reserve1)
-        )
-      )
-    } else if (pool.type === PoolType.STABLE_POOL) {
-      const total0 = rebases.get(token0.address)
-      const total1 = rebases.get(token1.address)
-      if (total0 && total1) {
-        rPools.push(
-          new StableSwapRPool(
-            pool.address,
-            token0,
-            token1,
-            pool.swapFee,
-            BigNumber.from(pool.reserve0),
-            BigNumber.from(pool.reserve1),
-            pool.token0.decimals,
-            pool.token1.decimals,
-            total0,
-            total1
-          )
-        )
-      }
-    }
-  })
-  return { rPools, tokens }
-}
-
-async function fetchRebases(pools: Pool[], chainId: ChainId) {
-  const tokenMap = new Map<string, Token>()
   pools.forEach((pool) => {
     tokenMap.set(pool.token0.address, pool.token0)
     tokenMap.set(pool.token1.address, pool.token1)

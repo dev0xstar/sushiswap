@@ -121,47 +121,7 @@ async function getPoolsByPagination(
       reserve0: true,
       reserve1: true,
     },
-    where: {
-      OR: [
-        {
-          isWhitelisted: true,
-          chainId,
-          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
-          version: {
-            in: CURRENT_SUPPORTED_VERSIONS,
-          },
-        },
-        {
-          chainId,
-          protocol: ProtocolName.SUSHISWAP,
-          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
-          version: {
-            in: CURRENT_SUPPORTED_VERSIONS,
-          },
-        }
-      ]
-    },
-  })
-}
-
-async function transform(chainId: ChainId, pools: Pool[]) {
-  const tokens: Map<string, Token> = new Map()
-  const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
-  const rebases = await fetchRebases(stablePools, chainId)
-
-  const rPools: RPool[] = []
-  pools.forEach((pool) => {
-    const token0 = {
-      address: pool.token0.address,
-      name: pool.token0.name,
-      symbol: pool.token0.symbol,
-    }
-    const token1 = {
-      address: pool.token1.address,
-      name: pool.token1.name,
-      symbol: pool.token1.symbol,
-    }
-    if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
+tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
     if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
       rPools.push(

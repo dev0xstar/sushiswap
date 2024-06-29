@@ -121,7 +121,12 @@ async function getPoolsByPagination(
       reserve0: true,
       reserve1: true,
     },
-tokens.set(token0.address, pool.token0)
+
+      address: pool.token1.address,
+      name: pool.token1.name,
+      symbol: pool.token1.symbol,
+    }
+    if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
     if (pool.type === PoolType.CONSTANT_PRODUCT_POOL) {
       rPools.push(

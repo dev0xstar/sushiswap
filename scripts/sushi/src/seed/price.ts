@@ -121,7 +121,28 @@ async function getPoolsByPagination(
       reserve0: true,
       reserve1: true,
     },
-
+    where: {
+      OR: [
+        {
+          isWhitelisted: true,
+          chainId,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: CURRENT_SUPPORTED_VERSIONS,
+          },
+        },
+        {
+          chainId,
+          protocol: ProtocolName.SUSHISWAP,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: CURRENT_SUPPORTED_VERSIONS,
+          },
+        }
+      ]
+    },
+  })
+}
       address: pool.token1.address,
       name: pool.token1.name,
       symbol: pool.token1.symbol,

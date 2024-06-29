@@ -119,7 +119,20 @@ async function getPoolsByPagination(
       swapFee: true,
       type: true,
       reserve0: true,
-      reserve1: t
+      reserve1: true,
+    },
+    where: {
+      OR: [
+        {
+          isWhitelisted: true,
+          chainId,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: CURRENT_SUPPORTED_VERSIONS,
+          },
+        },
+        {
+          chainId,
           protocol: ProtocolName.SUSHISWAP,
           type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
           version: {

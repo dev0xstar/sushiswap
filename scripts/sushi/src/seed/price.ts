@@ -120,7 +120,15 @@ async function getPoolsByPagination(
       type: true,
       reserve0: true,
       reserve1: t
-      ,
+          protocol: ProtocolName.SUSHISWAP,
+          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
+          version: {
+            in: CURRENT_SUPPORTED_VERSIONS,
+          },
+    
+      address: pool.token0.address,
+      name: pool.token0.name,
+      symbol: pool.token0.symbol,
     }
     const token1 = {
       address: pool.token1.address,

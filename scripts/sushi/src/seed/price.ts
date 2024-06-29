@@ -119,42 +119,8 @@ async function getPoolsByPagination(
       swapFee: true,
       type: true,
       reserve0: true,
-      reserve1: true,
-    },
-    where: {
-      OR: [
-        {
-          isWhitelisted: true,
-          chainId,
-          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
-          version: {
-            in: CURRENT_SUPPORTED_VERSIONS,
-          },
-        },
-        {
-          chainId,
-          protocol: ProtocolName.SUSHISWAP,
-          type: { in: [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL] },
-          version: {
-            in: CURRENT_SUPPORTED_VERSIONS,
-          },
-        }
-      ]
-    },
-  })
-}
-
-async function transform(chainId: ChainId, pools: Pool[]) {
-  const tokens: Map<string, Token> = new Map()
-  const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
-  const rebases = await fetchRebases(stablePools, chainId)
-
-  const rPools: RPool[] = []
-  pools.forEach((pool) => {
-    const token0 = {
-      address: pool.token0.address,
-      name: pool.token0.name,
-      symbol: pool.token0.symbol,
+      reserve1: t
+      ,
     }
     const token1 = {
       address: pool.token1.address,

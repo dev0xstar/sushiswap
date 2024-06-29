@@ -125,7 +125,20 @@ async function getPoolsByPagination(
           version: {
             in: CURRENT_SUPPORTED_VERSIONS,
           },
-    
+        }
+      ]
+    },
+  })
+}
+
+async function transform(chainId: ChainId, pools: Pool[]) {
+  const tokens: Map<string, Token> = new Map()
+  const stablePools = pools.filter((pool) => pool.type === PoolType.STABLE_POOL)
+  const rebases = await fetchRebases(stablePools, chainId)
+
+  const rPools: RPool[] = []
+  pools.forEach((pool) => {
+    const token0 = {
       address: pool.token0.address,
       name: pool.token0.name,
       symbol: pool.token0.symbol,

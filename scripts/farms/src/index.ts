@@ -40,4 +40,13 @@ export async function execute() {
      
   // eslint-disable-next-line turbo/no-undeclared-env-vars
   if (process.env.DRY_RUN) return
-  
+  ;(await import('./lib/redis.js')).redis.hset(   
+    'farms',
+    Object.fromEntries(
+      combined
+        .filter(({ farms }) => farms !== null)
+        .map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
+    )
+  )
+  console.log(`Finished updating farms`)
+}

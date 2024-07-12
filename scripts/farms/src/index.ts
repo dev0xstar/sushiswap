@@ -23,4 +23,10 @@ export async function execute() {
   const combined = [
     {
       chainId: ChainId.ETHEREUM,
-      farms: { ...ma
+      farms: { ...masterChefV1.farms, ...masterChefV2.farms },
+    },
+    ...minichefs,
+  ]
+
+  c
+  

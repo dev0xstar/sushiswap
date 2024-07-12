@@ -28,5 +28,16 @@ export async function execute() {
     ...minichefs,
   ]
 
-  c
+  const totalFarms = combined.reduce((acc, { farms }) => acc + (farms ? Object.keys(farms).length : 0), 0)
+  for (const combination of combined) {
+    if (combination.farms) {
+      console.log(`Chain ID: ${combination.chainId}. Farms: ${Object.keys(combination.farms).length}`)
+    } else {
+      console.log(`Chain ID: ${combination.chainId}. Error.`)
+    }    
+  }   
+  console.log(`Total farms: ${totalFarms}`)    
+     
+  // eslint-disable-next-line turbo/no-undeclared-env-vars
+  if (process.env.DRY_RUN) return
   
